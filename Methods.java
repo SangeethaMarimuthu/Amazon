@@ -1,7 +1,4 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -20,10 +17,9 @@ public class Methods {
     public void selectProduct(WebDriver driver, String prodname, String suggest, String filepath) throws IOException, InterruptedException {
         FileInputStream input = new FileInputStream("C:\\Users\\Rani Marimuthu\\IdeaProjects\\Test1\\src\\main\\resources\\amazonproperty.properties");
         prop.load(input);
-        WebDriverWait wait = new WebDriverWait(driver, 3000);
+        WebDriverWait wait = new WebDriverWait(driver, 5);
         int count = 0;
         int lastchar=0;
-        System.out.println("lastchar: "+lastchar);
         page1 = PageFactory.initElements(driver, AmazonPageObject.class);
         for (int i = 0; i < prodname.length(); i++) {
             lastchar++;
@@ -39,17 +35,22 @@ public class Methods {
                 output.write(temp);
                 }
             for (int j = 0; j < list1.size(); j++) {
-                System.out.println("Items:" + list1.get(j).getText());
+                //System.out.println("Items:" + list1.get(j).getText());
                 if (list1.get(j).getText().equalsIgnoreCase(prodname)) {
                     count = j;
                     list1.get(j).click();
+                    System.out.println("Created successfully");
+                    return;
                 }
             }
             if(lastchar == prodname.length() && count ==0)
             {
-                wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("search")))));
-                JavascriptExecutor js = (JavascriptExecutor) driver;
-                js.executeScript("arguments[0].click();", page1.search);
+                System.out.println("Inside if");
+                page1.search.sendKeys(Keys.ENTER);
+                //wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("search")))));
+                System.out.println("After cond");
+                //JavascriptExecutor js = (JavascriptExecutor) driver;
+                //js.executeScript("arguments[0].click();", page1.search);
             }
         }
     }

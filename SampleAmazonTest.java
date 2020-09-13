@@ -15,10 +15,7 @@ import org.testng.annotations.Test;
 
 import java.io.*;
 import java.time.Clock;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class SampleAmazonTest {
 
@@ -33,49 +30,47 @@ public class SampleAmazonTest {
         System.setProperty("webdriver.chrome.driver", prop.getProperty("chromedriver"));
         WebDriver driver = new ChromeDriver();
         System.out.println("Hello World");
+        String price=null;
         AmazonPageObject page1;
         page1 = PageFactory.initElements(driver, AmazonPageObject.class);
-        WebDriverWait wait = new WebDriverWait(driver, 3000);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         driver.get(prop.getProperty("url"));
         driver.manage().window().maximize();
         Select category = new Select(page1.categories);
         category.selectByVisibleText("Deals");
         meth.selectProduct(driver, prop.getProperty("productname"), prop.getProperty("suggestion"), prop.getProperty("sugesttionlistfile"));
+        wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("items")))));
+        ArrayList<WebElement> list2 = (ArrayList<WebElement>) driver.findElements(By.xpath(prop.getProperty("items")));
+        System.out.println("Product one: " + list2.get(0));
+        list2.get(0).click();
         Thread.sleep(3000);
-        List<WebElement> list2;
-        list2 = driver.findElements(By.xpath(prop.getProperty("items")));
-        System.out.println("Count: " + list2.size());
-        list2.get(1).click();
-        wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("price")))));
-        String price = page1.priceofproduct.getText();
-        System.out.println("Price of product: "+price);
-//                String prod = list2.get(1).getAttribute("alt");
-//                List<WebElement> list3;
-//                list3 = driver.findElements(By.xpath(prop.getProperty("price")));
-//                System.out.println(list3.get(0).getText());
-//                System.out.println("item name:"+prod);
-//                list2.get(1).click();
-//                Thread.sleep(5000);
-//                Set<String> windowids = driver.getWindowHandles();
-//                Iterator<String> ids =windowids.iterator();
-//                System.out.println("Size: "+windowids.size());
-//                while(ids.hasNext()){
-//                    //System.out.println("Window ids: "+ids.next().toString());
-//                    driver.switchTo().window(ids.next());
-//                    //Thread.sleep(3000);
-//                    if(driver.getTitle().equals(prod)) {
-//                        JavascriptExecutor js = (JavascriptExecutor) driver;
-//                        WebDriverWait wait = new WebDriverWait(driver, 3000);
-//                        wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("add")))));
-//                        js.executeScript("arguments[0].click();", page1.addtocart);
-//                        page1.cart.click();
-//                        Assert.assertEquals(page1.amount.getText(),"");
-//                        return;
-//                    }
+        String parent=driver.getWindowHandle();
+        System.out.println("Parent window: "+parent);
+        ArrayList<String> tabs2 = new ArrayList<String> (driver.getWindowHandles());
+        driver.switchTo().window(tabs2.get(2));
+        System.out.println("Titlleee: "+driver.getTitle());
+        Thread.sleep(3000);
 
+        System.out.println("price list: "+driver.findElements(By.xpath("//*[@id=\"price\"]/table/tbody/tr")).size());
+        try{
+            if(page1.deal_price.getSize()!= null)
+            {
+                price = page1.deal_price.getText();
             }
-
+            else {
+                price = page1.priceofproduct.getText();
+            }
         }
-
-
-
+        catch(Exception e)
+        {
+            price = page1.priceofproduct.getText();
+        }
+        System.out.println("Price of product: "+price);
+        wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("add_to_cart")))));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", page1.addtocart);
+        wait.until((ExpectedConditions.elementToBeClickable(By.xpath(prop.getProperty("cartprice")))));
+        String cart_price = page1.cart_price.getText();
+        Assert.assertEquals(cart_price, price);
+    }
+}

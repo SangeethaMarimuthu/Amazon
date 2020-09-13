@@ -16,14 +16,20 @@ public class AmazonPageObject {
     @FindBy(xpath="//*[@id=\"twotabsearchtextbox\"]")
     public WebElement input_field;
 
-    @FindBy(xpath="//*[@id=\"nav-search-submit-text\"]/input")
+    @FindBy(xpath="//*[@id=\"nav-search\"]/form/div[2]/div/input")
     public WebElement search;
 
     @FindBy(xpath="//*[@id=\"priceblock_ourprice\"]")
     public WebElement priceofproduct;
 
+    @FindBy(xpath="//*[@id=\"priceblock_dealprice\"]")
+    public WebElement deal_price;
+
     @FindBy(xpath="//input[@id=\"add-to-cart-button\"]")
     public WebElement addtocart;
+
+    @FindBy(xpath="//*[@id=\"hlb-subcart\"]/div[1]/span/span[2]")
+    public WebElement cart_price;
 
     @FindBy(xpath="//*[@id=\"nav-cart-count-container\"]")
     public WebElement cart;
